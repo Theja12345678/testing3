@@ -9,6 +9,9 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
+    env:
+      VITE_API_URL: http://localhost:3006/api/v1 # Define your API URL here
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -22,11 +25,13 @@ jobs:
         run: npm install
 
       - name: Build
-        run: npm run build
+        run: |
+          npm run build
+          sed -i 's#VITE_API_URL_PLACEHOLDER#'${{ env.VITE_API_URL }}'#' dist/index.html  # Replace placeholder in index.html
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@3.7.1
         with:
           ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: gh-pages  
-          FOLDER: dist  
+          BRANCH: gh-pages
+          FOLDER: dist
